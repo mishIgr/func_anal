@@ -2,14 +2,9 @@ import numpy as np
 from enum import Enum
 from fractions import Fraction
 from tabulate import tabulate
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
-
-INDICES_OF_PLANES = [
-    (1, 2, 3),
-    (1, 2, 4),
-    (1, 3, 5),
-    (2, 3, 6),
-]
 
 INDICES_OF_PLANES = [
     (1, 2, 3),
@@ -21,8 +16,8 @@ INDICES_OF_PLANES = [
     (3, 6, 8),
     (7, 8, 9),
     (11, 12, 16),
-    (9, 11, 16),
-    (8, 9, 11),
+    (8, 11, 16),
+    (8, 9, 16),
     (6, 8, 11),
     (10, 11, 12),
     (2, 10, 11),
@@ -257,6 +252,37 @@ def norm_w(data: list[np.ndarray], vector: np.ndarray) -> Fraction:
     return Fraction(-1)
 
 
+def draw_fig(points):
+    # Создание 3D-графика
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Построение каждой плоскости
+    for plane in INDICES_OF_PLANES:
+        # Получаем координаты точек плоскости
+        triangle = [points[i - 1] for i in plane]
+        # Создаём полигон
+        poly = Poly3DCollection([triangle], alpha=0.9, edgecolor='k')
+        ax.add_collection3d(poly)
+
+    # Подписываем номера точек
+    for i, point in enumerate(points):
+        ax.text(point[0], point[1], point[2], f'{i + 1}', color='red',
+                fontsize=12)
+
+    # Установка пределов осей
+    ax.set_xlim([-10, 10])
+    ax.set_ylim([-10, 10])
+    ax.set_zlim([-10, 10])
+
+    # Подписи осей
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+
+    plt.show()
+
+
 def main():
     data = [
         [7, 2, 0],
@@ -272,6 +298,8 @@ def main():
 
     np_data = convert_to_numpy_data(data)
     convex_np_data = add_new_point(np_data)
+
+    draw_fig(convex_np_data)
 
     for ind, vector in enumerate(convex_np_data):
         print(f'point {ind + 1}: {" ".join(map(str, vector))}')
