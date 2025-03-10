@@ -253,7 +253,7 @@ def norm_w(data: list[np.ndarray], vector: np.ndarray) -> Fraction:
 
 
 def draw_fig(points):
-    # Создание 3D-графика
+    """Создание 3D-графика"""
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
