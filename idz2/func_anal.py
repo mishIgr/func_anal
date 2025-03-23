@@ -1,74 +1,18 @@
-from fractions import Fraction
 import numpy as np
 import sympy as sp
 
 
-def num_to_fraction(num: str | int) -> Fraction:
+def print_matrix(matrix, precision=4):
     """
-    Перевести число или дробь в Fraction
+    Напечатать np.array[float]
     """
-    if isinstance(num, int):
-        return Fraction(num)
+    sympy_matrix = sp.Matrix(matrix)
 
-    if '/' not in num:
-        raise ValueError(
-            'Дробь передаваемая в виде строки не содержит символа "/".' +
-            f'Дробь "{num}"'
-        )
-
-    return Fraction(*map(int, num.split('/')))
-
-
-def fraction_to_rational(num: Fraction) -> sp.Rational:
-    """
-    Перевести Fraction в Rational
-    """
-    return sp.Rational(num.numerator, num.denominator)
-
-
-def rational_to_fraction(num: sp.Rational) -> Fraction:
-    """
-    Перевести Rational в Fraction
-    """
-    return Fraction(num.numerator, num.denominator)
-
-
-def normal_matrix(matrix):
-    """
-    Нормализация матрицы
-    """
-    max_denominator = 1
-    for el in (el for row in matrix for el in row):
-        max_denominator = max(el.denominator, max_denominator)
-
-    return (
-        np.array([[num * max_denominator for num in row]for row in matrix]),
-        max_denominator
-    )
-
-
-def get_matrix_fraction(matrix):
-    """
-    Перевод матрицы в np.array[Fraction]
-    """
-    return np.array([[num_to_fraction(num) for num in row] for row in matrix])
-
-
-def print_fraction_matrix(matrix):
-    """
-    Напечатать np.array[Fraction]
-    """
-    sympy_matrix = sp.Matrix([
-        [fraction_to_rational(num) for num in row] for row in matrix
-    ])
-
-    sp.pprint(sympy_matrix)
+    approx_matrix = sp.N(sympy_matrix, precision)
+    sp.pprint(approx_matrix)
 
 
 def find_max_eigenvalue_and_eigenvector(matrix):
-    matrix = np.array([
-        [float(num) for num in row] for row in matrix
-    ])
     eigenvalues, eigenvectors = np.linalg.eig(matrix)
 
     max_index = np.argmax(eigenvalues)
@@ -90,7 +34,7 @@ def norm_matrix(matrix, p):
         vector = np.array(
             [(ind == index) * 1 for ind in range(len(matrix[0]))]
         )
-        return norm, np.array([*map(float, vector)])
+        return norm, vector
 
     elif p == 2:
 
@@ -104,7 +48,7 @@ def norm_matrix(matrix, p):
             enumerate(np.sum(np.abs(matrix), axis=1)), key=lambda t: t[1]
         )
         vector = np.array([(-1 if el < 0 else 1) for el in matrix[index]])
-        return norm, np.array([*map(float, vector)])
+        return norm, vector
 
 
 def norm_vector(vector, p):
@@ -129,22 +73,31 @@ def main():
         [246, -522, 342, -435],
     ]
 
-    # matrix = [
-    #     ['333/7', '96/7', '-180/7', '12/7'],
-    #     ['1431/14', '-69/7', '-477/7', '-219/14'],
-    #     ['-540/7', '312/7', '423/7', '150/7'],
-    #     ['-324/7', '288/7', '216/7', '153/7']
-    # ]
+    data = np.array(matrix)
+    rdata = np.linalg.inv(data)
 
-    data = get_matrix_fraction(matrix)
-    print_fraction_matrix(data)
+    print('Для A')
+    print_matrix(data)
 
     for p in [1, 2, np.inf]:
         norm, vector = norm_matrix(data, p)
         print(f'Норма при p = {p}: {norm}')
         print(f'Вектор при p = {p}: {vector}')
-        tmp = matrix @ vector.reshape(-1, 1)
-        print(f'||A * x|| = {norm_vector(tmp.flatten(), p)}')
+        tmp = data @ vector.reshape(-1, 1)
+        print(f'||A * x|| = ||{tmp.flatten()}|| = {norm_vector(tmp.flatten(), p)}')
+        print()
+
+    print()
+
+    print('Для A^-1')
+    print_matrix(rdata)
+
+    for p in [1, 2, np.inf]:
+        norm, vector = norm_matrix(rdata, p)
+        print(f'Норма при p = {p}: {norm}')
+        print(f'Вектор при p = {p}: {vector}')
+        tmp = rdata @ vector.reshape(-1, 1)
+        print(f'||A * x|| = ||{tmp.flatten()}|| = {norm_vector(tmp.flatten(), p)}')
         print()
 
 
