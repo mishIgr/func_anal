@@ -271,9 +271,9 @@ def draw_fig(points):
                 fontsize=12)
 
     # Установка пределов осей
-    ax.set_xlim([-10, 10])
-    ax.set_ylim([-10, 10])
-    ax.set_zlim([-10, 10])
+    ax.set_xlim([-20, 20])
+    ax.set_ylim([-20, 20])
+    ax.set_zlim([-20, 20])
 
     # Подписи осей
     ax.set_xlabel('X')
@@ -285,21 +285,21 @@ def draw_fig(points):
 
 def main():
     data = [
-        [6, 6, 0],
-        [5, 0, 5],
-        [0, 5, 6],
-        ["258 / 31", 0, 0],
-        [0, "79 / 8", 0],
-        [0, 0, "54 / 7"],
+        [9, 8, 0],
+        [4, 0, 9],
+        [0, 8, 2],
+        ["107 / 4", 0, 0],
+        [0, "640 / 71", 0],
+        [0, 0, "85 / 9"],
     ]
 
-    a = [6, -5, 5]
-    b = [-5, 7, 5]
+    a = [8, -7, 8]
+    b = [-7, 5, 5]
 
     np_data = convert_to_numpy_data(data)
     convex_np_data = add_new_point(np_data)
 
-    draw_fig(convex_np_data)
+    # draw_fig(convex_np_data)
 
     for ind, vector in enumerate(convex_np_data):
         print(f'point {ind + 1}: {" ".join(map(str, vector))}')
@@ -317,6 +317,14 @@ def main():
     ab_fraction_positive = [
         *map(lambda num: num_to_fraction(abs(num)), sum_a_b)
     ]
+
+    for vector in [a_fraction_positive, b_fraction_positive, ab_fraction_positive]:
+        print(f'Для {vector}')
+        for indexes in INDICES_OF_PLANES[:4]:
+            basis = [*map(lambda ind: np_data[ind - 1], indexes)]
+            coefs = basis_expansion(basis, vector)
+            print(f'Разложение в {indexes}: {coefs}')
+        print()
 
     print()
     norm_a = norm_w(np_data, a_fraction_positive)
