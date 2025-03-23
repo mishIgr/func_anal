@@ -8,8 +8,10 @@ def print_matrix(matrix, precision=4):
     """
     sympy_matrix = sp.Matrix(matrix)
 
-    approx_matrix = sp.N(sympy_matrix, precision)
-    sp.pprint(approx_matrix)
+    if precision >= 0:
+        sympy_matrix = sp.N(sympy_matrix, precision)
+
+    sp.pprint(sympy_matrix)
 
 
 def find_max_eigenvalue_and_eigenvector(matrix):
@@ -99,6 +101,26 @@ def main():
         tmp = rdata @ vector.reshape(-1, 1)
         print(f'||A * x|| = ||{tmp.flatten()}|| = {norm_vector(tmp.flatten(), p)}')
         print()
+
+    print()
+
+    print('Обусловленость A')
+    for p in [1, 2, np.inf]:
+        norm, _ = norm_matrix(rdata, p)
+        rnorm, _ = norm_matrix(rdata, p)
+        print(f'p = {p}: {norm * rnorm}')
+
+    print()
+
+    print('Союзная матрица')
+    g = data.T @ data
+    print_matrix(g, precision=-1)
+    eigenvalues, eigenvectors = np.linalg.eig(g)
+    print(f'Собственнные значения: {eigenvalues}')
+    print(f'Собственнные векторы: {eigenvectors}')
+    print()
+
+    print(np.sqrt(np.max(eigenvalues)))
 
 
 if __name__ == '__main__':
