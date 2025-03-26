@@ -106,7 +106,7 @@ def main():
 
     print('Обусловленость A')
     for p in [1, 2, np.inf]:
-        norm, _ = norm_matrix(rdata, p)
+        norm, _ = norm_matrix(data, p)
         rnorm, _ = norm_matrix(rdata, p)
         print(f'p = {p}: {norm * rnorm}')
 
