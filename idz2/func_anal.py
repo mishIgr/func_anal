@@ -17,7 +17,7 @@ def print_matrix(matrix, precision=4):
 def find_max_eigenvalue_and_eigenvector(matrix):
     eigenvalues, eigenvectors = np.linalg.eig(matrix)
 
-    max_index = np.argmax(eigenvalues)
+    max_index = np.argmax(np.abs(eigenvalues))
 
     max_eigenvalue = eigenvalues[max_index]
     max_eigenvector = eigenvectors[:, max_index]
@@ -119,8 +119,6 @@ def main():
     print(f'Собственнные значения: {eigenvalues}')
     print(f'Собственнные векторы: {eigenvectors}')
     print()
-
-    print(np.sqrt(np.max(eigenvalues)))
 
 
 if __name__ == '__main__':

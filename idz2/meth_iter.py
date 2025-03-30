@@ -15,24 +15,24 @@ def print_matrix(matrix, precision=4):
 
 
 def main():
-    A = np.array([
-        [645, -1422, 954, -1266],
-        [-684, 1521, -1008, 1332],
-        [-1074, 2412, -1611, 2154],
-        [246, -522, 342, -435],
+    G = np.array([
+        [2097873.0, -4676454.0, 3119148.0, -4148064.0],
+        [-4676454.0, 10425753.0, -6954012.0, 9248742.0],
+        [3119148.0, -6954012.0, 4638465.0, -6169284.0],
+        [-4148064.0, 9248742.0, -6169284.0, 8205921.0]
     ])
 
     x = np.array([1, 1, 1, 1]).reshape(-1, 1)
     b = np.array([1/2, 1/3, 1/4, 1/5]).reshape(-1, 1)
 
-    B = np.linalg.inv(A.T @ A)
+    B = np.linalg.inv(G)
 
     print('B:')
     print_matrix(B)
     print()
 
     res = []
-    index_save_iter = {5, 10}
+    index_save_iter = [5, 10]
 
     for i in range(100):
         x = B @ x + b
@@ -43,8 +43,13 @@ def main():
     print_matrix(x)
     print()
 
-    for v in res:
+    print('Проверка', (np.identity(4) - B) @ x - b)
+    print()
+
+    for ind, v in zip(index_save_iter, res):
+        print(f'x{ind}:')
         print_matrix(v)
+        print()
 
 
 if __name__ == '__main__':
