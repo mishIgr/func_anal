@@ -153,6 +153,11 @@ def main():
     print(f'Норма f в X*: {f_norm_in_x}')
     print()
 
+    for ind in range(4):
+        print(f'f(e_{ind}) = {f[ind]}')
+    f_norm = np.linalg.norm(f)
+    print(f'Норма f в {{e}}: {f_norm}')
+
 
 if __name__ == "__main__":
     main()
