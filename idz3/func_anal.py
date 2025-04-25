@@ -74,9 +74,9 @@ def convert_solve_to_np(solution: dict[Any, Any],
     return np.array([float_solution[var] for var in x_vars], dtype=dtype)
 
 
-def get_norm_ort_vector(c: str,
-                        *sys_eq: tuple | np.ndarray,
-                        verbose: bool = False) -> np.ndarray:
+def get_ort_vector(c: str,
+                   *sys_eq: tuple | np.ndarray,
+                   verbose: bool = False) -> np.ndarray:
     """
     Находит нормированный ортогональный вектор
     """
@@ -127,11 +127,11 @@ def main():
     print(f'Норма g в X: {g_norm}')
     print()
 
-    a = get_norm_ort_vector('a', g, k, verbose=verbose)
+    a = get_ort_vector('a', g, k, verbose=verbose)
     a /= np.linalg.norm(a)
-    b = get_norm_ort_vector('b', g, k, a, verbose=verbose)
+    b = get_ort_vector('b', g, k, a, verbose=verbose)
     b /= np.linalg.norm(b)
-    c = get_norm_ort_vector('c', k, a, b, verbose=verbose)
+    c = get_ort_vector('c', k, a, b, verbose=verbose)
     c /= np.linalg.norm(c)
 
     print(f'Базис: {a}, {b}, {c}')
@@ -144,10 +144,10 @@ def main():
     print(f'Норма g в Y*: {g_norm_in_y}')
     print()
 
-    d = get_norm_ort_vector('d', a, b, c, verbose=verbose)
+    d = get_ort_vector('d', a, b, c, verbose=verbose)
     d /= np.linalg.norm(d)
 
-    f = get_norm_ort_vector('f', a, b, (c, g.dot(c)), d, verbose=verbose)
+    f = get_ort_vector('f', a, b, (c, g.dot(c)), d, verbose=verbose)
 
     f_norm_in_x = np.abs(f.dot(c))
     print(f'Норма f в X*: {f_norm_in_x}')
