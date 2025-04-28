@@ -84,16 +84,16 @@ def another_index(index: list[int]):
     return max_index
 
 
-def get_orientation_normals(data: np.ndarray) -> list[np.ndarray]:
-    normals = []
+def get_orientation_planes(data: np.ndarray) -> list[Plane]:
+    planes = []
 
     for indexes in INDICES_OF_PLANES:
         points = [data[ind - 1] for ind in indexes]
         plane = Plane(points)
         plane.orientation(data[another_index(indexes) - 1])
-        normals.append(plane.normal)
+        planes.append(plane)
 
-    return normals
+    return planes
 
 
 class Coord(Enum):
@@ -163,22 +163,29 @@ def divide_into_two_planes(cone: list[int], normals: list[np.ndarray]) -> \
 
 
 def find_extremes(func: np.ndarray, data: np.ndarray,
-                  normals: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
+                  normals: list[np.ndarray]) -> tuple:
     max_extremum = np.zeros(3)
     min_extremum = np.zeros(3)
+    planes_divide = []
+    func_expansions = []
 
     for ind, cone in enumerate(CONE_OF_VERTICES):
         first_plane, second_plane = divide_into_two_planes(cone, normals)
+        planes_divide.append([first_plane, second_plane])
 
+        expansions = []
         for plane in [first_plane, second_plane]:
             basis_vector = [*map(lambda ind: normals[ind - 1], plane)]
             expansion = basis_expansion(basis_vector, func)
+            expansions.append(expansion)
             if all(map(lambda x: x >= 0, expansion)):
                 max_extremum = data[ind]
             if all(map(lambda x: x <= 0, expansion)):
                 min_extremum = data[ind]
 
-    return min_extremum, max_extremum
+        func_expansions.append(func_expansions)
+
+    return min_extremum, max_extremum, planes_divide, func_expansions
 
 
 def draw_fig(points):
@@ -226,8 +233,9 @@ def main():
 
     # draw_fig(data)
 
-    normals = get_orientation_normals(data)
-    min_extremum, max_extremum = find_extremes(h, data, normals)
+    planes = get_orientation_planes(data)
+    normals = [plane.normal for plane in planes]
+    min_extremum, max_extremum, planes_divide, func_expansions = find_extremes(h, data, normals)
     print(f'{min_extremum=} {max_extremum=}')
 
 
